@@ -1,0 +1,17 @@
+{
+  "name": "Landing",
+  "version": "0.0.1",
+  "description": "Landin page",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Grzegorz Nyga",
+  "license": "BSD-2-Clause",
+  "devDependencies": {
+    "gulp": "~3.6.0",
+    "gulp-stylus": "~0.2.1",
+    "gulp-autoprefixer": "0.0.7",
+    "gulp-preprocess": "~1.0.1"
+  }
+}
