@@ -8,7 +8,6 @@ gulp.task('server', function() {
 	connect.server({
 		root: './compiled/',
 		port: 8080,
-		open: { browser:'Goole Chrome' },
 		livereload: true
 	});
 });
