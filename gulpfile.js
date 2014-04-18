@@ -33,12 +33,19 @@ gulp.task('images', function() {
 	.pipe(connect.reload());
 });
 
+gulp.task('scripts', function() {
+	gulp.src('./components/scripts/**/*.js')	
+	.pipe(gulp.dest('./compiled/js/'))
+	.pipe(connect.reload());
+});
+
 // Watch Files For Changes
 gulp.task('watch', ['server'], function() {
 	gulp.watch('./components/styles/*.styl', ['styles']);
 	gulp.watch('./components/html/**/*.html', ['html']);
 	gulp.watch('./components/images/**', ['images']);
+	gulp.watch('./components/scripts/**', ['scripts']);
 });
 
-gulp.task('default', ['styles', 'html', 'images', 'watch']);
+gulp.task('default', ['styles', 'scripts', 'images', 'html', 'watch']);
 
