@@ -27,11 +27,16 @@ gulp.task('html', function() {
 	.pipe(connect.reload());
 });
 
+gulp.task('images', function() {
+	gulp.src('./components/images/**')	
+	.pipe(gulp.dest('./compiled/img/'))
+});
+
 // Watch Files For Changes
 gulp.task('watch', ['server'], function() {
 	gulp.watch('./components/styles/*.styl', ['styles']);
 	gulp.watch('./components/html/**/*.html', ['html']);
 });
 
-gulp.task('default', ['html', 'styles', 'watch']);
+gulp.task('default', ['styles', 'html', 'images', 'watch']);
 
