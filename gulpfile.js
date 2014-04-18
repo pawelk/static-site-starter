@@ -30,12 +30,14 @@ gulp.task('html', function() {
 gulp.task('images', function() {
 	gulp.src('./components/images/**')	
 	.pipe(gulp.dest('./compiled/img/'))
+	.pipe(connect.reload());
 });
 
 // Watch Files For Changes
 gulp.task('watch', ['server'], function() {
 	gulp.watch('./components/styles/*.styl', ['styles']);
 	gulp.watch('./components/html/**/*.html', ['html']);
+	gulp.watch('./components/images/**', ['images']);
 });
 
 gulp.task('default', ['styles', 'html', 'images', 'watch']);
