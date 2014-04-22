@@ -1,1 +1,1 @@
-Landing page
+# Statis Site Starter
