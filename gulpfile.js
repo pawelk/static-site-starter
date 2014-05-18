@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var gutil = require('gulp-util');
 var stylus = require('gulp-stylus');
 var prefix = require('gulp-autoprefixer');
 var preprocess = require('gulp-preprocess');
@@ -15,7 +16,9 @@ gulp.task('server', function() {
 gulp.task('styles', function () {
 	gulp.src('./components/styles/*.styl')
 	.pipe(stylus())
-	.pipe(prefix())
+	.on('error', gutil.log)
+	.on('error', gutil.beep)
+	.pipe(prefix())	
 	.pipe(gulp.dest('./compiled/css/'))
 	.pipe(connect.reload());
 });
