@@ -7,6 +7,8 @@ var connect = require('gulp-connect');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var sourcemaps = require('gulp-sourcemaps');
+var imagemin = require('gulp-imagemin');
+var newer = require('gulp-newer');
 
 gulp.task('server', function() {
 	connect.server({
@@ -35,6 +37,8 @@ gulp.task('html', function() {
 
 gulp.task('images', function() {
 	gulp.src('./components/images/**')
+		.pipe(newer('./compiled/img/'))
+		.pipe(imagemin())
 		.pipe(gulp.dest('./compiled/img/'))
 		.pipe(connect.reload());
 });
