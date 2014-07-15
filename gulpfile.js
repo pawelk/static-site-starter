@@ -1,6 +1,6 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var stylus = require('gulp-stylus');
+var less = require('gulp-less');
 var prefix = require('gulp-autoprefixer');
 var preprocess = require('gulp-preprocess');
 var connect = require('gulp-connect');
@@ -19,11 +19,13 @@ gulp.task('server', function() {
 });
 
 gulp.task('styles', function() {
-	gulp.src('./components/styles/*.styl')
-		.pipe(stylus())
+	gulp.src('./components/styles/*.less')
+		.pipe(sourcemaps.init())
+		.pipe(less())
 		.on('error', gutil.log)
 		.on('error', gutil.beep)
 		.pipe(prefix())
+		.pipe(sourcemaps.write('./maps'))
 		.pipe(gulp.dest('./compiled/css/'))
 		.pipe(connect.reload());
 });
@@ -48,14 +50,14 @@ gulp.task('scripts', function() {
 		.pipe(sourcemaps.init())
 		.pipe(uglify())
 		.pipe(concat('all.min.js'))
-		.pipe(sourcemaps.write('.'))
+		.pipe(sourcemaps.write('./maps'))
 		.pipe(gulp.dest('./compiled/js/'))
 		.pipe(connect.reload());
 });
 
 // Watch Files For Changes
 gulp.task('watch', ['server'], function() {
-	gulp.watch('./components/styles/*.styl', ['styles']);
+	gulp.watch('./components/styles/*.less', ['styles']);
 	gulp.watch('./components/html/**/*.html', ['html']);
 	gulp.watch('./components/images/**', ['images']);
 	gulp.watch('./components/scripts/**', ['scripts']);
