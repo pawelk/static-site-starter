@@ -21,30 +21,6 @@ gulp.task('set-prod', function() {
 
 gulp.task( 'clean', function(cb){
 	del(['compiled/**/*'], cb);
-    /*
-    if(prod){
-	return gulp.src('compiled/css/** /*', {read: false})
-	.pipe(clean());
-    } else {
-
-    }
-    */
-});
-gulp.task( 'clean-imgs', function(){
-    if(prod){
-	return gulp.src('compiled/img/**/*', {read: false})
-	.pipe(clean());
-    } else {
-
-    }
-});
-gulp.task( 'clean-js', function(){
-    if(prod){
-	return gulp.src('compiled/js/**/*', {read: false})
-	.pipe(clean());
-    } else {
-
-    }
 });
 
 gulp.task('server', function() {
