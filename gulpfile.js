@@ -5,7 +5,6 @@ var prefix = require('gulp-autoprefixer');
 var fileinclude = require('gulp-file-include');
 var connect = require('gulp-connect');
 var uglify = require('gulp-uglify');
-var concat = require('gulp-concat');
 var sourcemaps = require('gulp-sourcemaps');
 var imagemin = require('gulp-imagemin');
 var newer = require('gulp-newer');
@@ -48,8 +47,7 @@ gulp.task('images', function() {
 gulp.task('scripts', function() {
 	gulp.src('./components/scripts/**/*.js')
 		.pipe(sourcemaps.init())
-		.pipe(uglify())
-		.pipe(concat('all.min.js'))
+		.pipe(uglify())		
 		.pipe(sourcemaps.write('./maps'))
 		.pipe(gulp.dest('./compiled/js/'))
 		.pipe(connect.reload());
