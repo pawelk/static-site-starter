@@ -5,19 +5,18 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>title</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- @include parts/head.html -->
+	@@include('parts/head.html')
 </head>
 <body>
 	<header>
-		<nav>
-			<a href="index.html">Index</a>
-			<a href="sub-page.html">SubPage</a>
-		</nav>
+		@@include('parts/menu.html', {
+			"index": "class=\"active\""
+		})
 	</header>
 	<main>
-		<h1>Index11</h1>  
+		<h1>Index111</h1>  
 		<img src="img/placeholder.png" alt="placeholder">
-	</main> 
-	<!-- @include parts/end-body.html -->
+	</main>
+	@@include('parts/end-body.html')
 </body>
 </html>

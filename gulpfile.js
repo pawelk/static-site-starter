@@ -2,7 +2,7 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var less = require('gulp-less');
 var prefix = require('gulp-autoprefixer');
-var preprocess = require('gulp-preprocess');
+var fileinclude = require('gulp-file-include');
 var connect = require('gulp-connect');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
@@ -32,7 +32,7 @@ gulp.task('styles', function() {
 
 gulp.task('html', function() {
 	gulp.src('./components/html/*.html')
-		.pipe(preprocess())
+		.pipe(fileinclude())
 		.pipe(gulp.dest('./compiled/'))
 		.pipe(connect.reload());
 });
