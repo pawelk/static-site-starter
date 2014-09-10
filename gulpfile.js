@@ -8,6 +8,7 @@ var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var imagemin = require('gulp-imagemin');
 var newer = require('gulp-newer');
+var plumber = require('gulp-plumber');
 
 gulp.task('server', function() {
 	connect.server({
@@ -46,9 +47,11 @@ gulp.task('images', function() {
 
 gulp.task('scripts', function() {
 	gulp.src('./components/scripts/**/*.js')
+		.pipe(plumber())
 		.pipe(sourcemaps.init())
 		.pipe(uglify())		
 		.pipe(sourcemaps.write('./maps'))
+		.pipe(plumber.stop())
 		.pipe(gulp.dest('./compiled/js/'))
 		.pipe(connect.reload());
 });
