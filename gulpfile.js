@@ -57,7 +57,7 @@ gulp.task('scripts', function() {
 
 // Watch Files For Changes
 gulp.task('watch', ['server'], function() {
-	gulp.watch('./components/styles/*.less', ['styles']);
+	gulp.watch('./components/styles/**/*.less', ['styles']);
 	gulp.watch('./components/html/**/*.html', ['html']);
 	gulp.watch('./components/images/**', ['images']);
 	gulp.watch('./components/scripts/**', ['scripts']);
