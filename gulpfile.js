@@ -56,6 +56,18 @@ gulp.task('scripts', function() {
 		.pipe(connect.reload());
 });
 
+//for external js libs
+gulp.task('libs', function() {
+	gulp.src('./components/libs/**')
+		.pipe(gulp.dest('./compiled/js'));
+});
+
+// for fonts
+gulp.task('fonts', function() {
+	gulp.src('./components/fonts/**')
+		.pipe(gulp.dest('./compiled/fonts'));
+});
+
 // Watch Files For Changes
 gulp.task('watch', ['server'], function() {
 	gulp.watch('./components/styles/**/*.less', ['styles']);
@@ -64,4 +76,4 @@ gulp.task('watch', ['server'], function() {
 	gulp.watch('./components/scripts/**', ['scripts']);
 });
 
-gulp.task('default', ['styles', 'scripts', 'images', 'html', 'watch']);
+gulp.task('default', ['styles', 'scripts', 'images', 'html', 'libs', 'fonts', 'watch']);
