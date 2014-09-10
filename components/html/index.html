@@ -7,14 +7,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	@@include('parts/head.html')
 </head>
-<body>
-	<header>
-		@@include('parts/menu.html', {
-			"index": "class=\"active\""
-		})
-	</header>
+<body>	
+	@@include('parts/header.html', {
+		"index": "class=\"active\""
+	})	
 	<main>
-		<h1>Index111</h1>  
+		<h2>Index</h2>	 
 		<img src="img/placeholder.png" alt="placeholder">
 	</main>
 	@@include('parts/end-body.html')

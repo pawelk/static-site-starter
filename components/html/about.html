@@ -7,14 +7,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	@@include('parts/head.html')
 </head>
-<body>
-	<header>
-		@@include('parts/menu.html', {
-			"index": "class=\"active\""
-		})
-	</header>
+<body>	
+	@@include('parts/header.html', {
+		"about": "class=\"active\""
+	})	
 	<main>
-		<h1>Sub Page</h1> 
+		<h2>About</h2> 
 	</main> 
 	@@include('parts/end-body.html')
 </body>
