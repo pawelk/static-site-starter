@@ -6,7 +6,6 @@ var fileinclude = require('gulp-file-include');
 var connect = require('gulp-connect');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
-var imagemin = require('gulp-imagemin');
 var newer = require('gulp-newer');
 var plumber = require('gulp-plumber');
 
@@ -37,13 +36,6 @@ gulp.task('html', function() {
 		.pipe(connect.reload());
 });
 
-gulp.task('images', function() {
-	gulp.src('./components/images/**')
-		.pipe(newer('./compiled/img/'))
-		.pipe(imagemin())
-		.pipe(gulp.dest('./compiled/img/'))
-		.pipe(connect.reload());
-});
 
 gulp.task('scripts', function() {
 	gulp.src('./components/scripts/**/*.js')
@@ -72,8 +64,7 @@ gulp.task('fonts', function() {
 gulp.task('watch', ['server'], function() {
 	gulp.watch('./components/styles/**/*.less', ['styles']);
 	gulp.watch('./components/html/**/*.html', ['html']);
-	gulp.watch('./components/images/**', ['images']);
 	gulp.watch('./components/scripts/**', ['scripts']);
 });
 
-gulp.task('default', ['styles', 'scripts', 'images', 'html', 'libs', 'fonts', 'watch']);
+gulp.task('default', ['styles', 'scripts', 'html', 'libs', 'fonts', 'watch']);
