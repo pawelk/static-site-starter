@@ -48,16 +48,21 @@ gulp.task('scripts', function() {
 		.pipe(connect.reload());
 });
 
-//for external js libs
-gulp.task('libs', function() {
-	gulp.src('./components/libs/**')
-		.pipe(gulp.dest('./compiled/js'));
-});
-
 // for fonts
-gulp.task('fonts', function() {
+gulp.task('copy', function() {
 	gulp.src('./components/fonts/**')
-		.pipe(gulp.dest('./compiled/fonts'));
+	    .pipe(newer('./compiled/fonts'))
+	    .pipe(gulp.dest('./compiled/fonts'))
+	    .pipe(connect.reload());
+	gulp.src('./components/libs/**')
+	    .pipe(newer('./compiled/js/libs'))
+	    .pipe(gulp.dest('./compiled/js/libs'))
+	    .pipe(connect.reload());
+	gulp.src('./components/images/**')
+	    .pipe(newer('./compiled/img'))
+	    .pipe(gulp.dest('./compiled/img'))
+	    .pipe(connect.reload());
+    
 });
 
 // Watch Files For Changes
@@ -65,6 +70,7 @@ gulp.task('watch', ['server'], function() {
 	gulp.watch('./components/styles/**/*.less', ['styles']);
 	gulp.watch('./components/html/**/*.html', ['html']);
 	gulp.watch('./components/scripts/**', ['scripts']);
+	gulp.watch('./components/images/**', ['copy']);
 });
 
-gulp.task('default', ['styles', 'scripts', 'html', 'libs', 'fonts', 'watch']);
+gulp.task('default', ['styles', 'scripts', 'html', 'copy', 'watch']);
