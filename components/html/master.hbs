@@ -3,6 +3,9 @@
     <head>
 	<title>{{ _package.name }} - {{ _page.title  }}</title>
 	<link rel="stylesheet" href="css/main.css?{{ build }}" />
+	{{# if _page.og }}
+	    {{> meta _page.og}}
+	{{/if }}
     </head>
     <body>
 	<header>
@@ -19,6 +22,7 @@
 
 	<footer>
 	    &copy; 2015 {{ _package.author }}, {{ _package.license }}
+	    
 	</footer>	    
 	<script src="js/main.js?{{ build }}"></script>
     </body>

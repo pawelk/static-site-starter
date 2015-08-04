@@ -7,7 +7,6 @@ var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var newer = require('gulp-newer');
 var plumber = require('gulp-plumber');
-var handlebars = require('gulp-compile-handlebars');
 var rename = require('gulp-rename');
 var master = require('gulp-handlebars-master');
 var fs = require('fs');
@@ -41,7 +40,7 @@ gulp.task('handlebars', function() {
 
     var templatedata = JSON.parse(fs.readFileSync('./components/data.json'));
 	templatedata._package = require('./package.json');
-	    templatedata.build = Date.now();
+	templatedata.build = Date.now();
 
     gulp.src('./components/html/pages/*.hbs')
 	.pipe(master('./components/html/master.hbs', templatedata, options))

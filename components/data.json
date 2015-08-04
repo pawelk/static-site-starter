@@ -8,6 +8,9 @@
 	"title" : "About us",
 	"nav_about" : "active",
 	"mainclass" : "about",
-	"people" : ["Pawel", "Grzegorz"]
+	"people" : ["Pawel", "Grzegorz"],
+	"og" : {
+	    "image" : "img/logo.png"
+	}
     }
 }
