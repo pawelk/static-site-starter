@@ -1,0 +1,13 @@
+{
+    "index" : {
+	"title" : "Home Page!",
+	"mainclass" : "home",
+	"nav_index" : "active"
+    },
+    "about" : {
+	"title" : "About us",
+	"nav_about" : "active",
+	"mainclass" : "about",
+	"people" : ["Pawel", "Grzegorz"]
+    }
+}

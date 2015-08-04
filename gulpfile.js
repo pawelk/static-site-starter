@@ -2,13 +2,17 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var less = require('gulp-less');
 var prefix = require('gulp-autoprefixer');
-var fileinclude = require('gulp-file-include');
 var connect = require('gulp-connect');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var newer = require('gulp-newer');
 var plumber = require('gulp-plumber');
+var handlebars = require('gulp-compile-handlebars');
+var rename = require('gulp-rename');
+var master = require('gulp-handlebars-master');
+var fs = require('fs');
 
+    
 gulp.task('server', function() {
 	connect.server({
 		root: './compiled/',
@@ -29,11 +33,23 @@ gulp.task('styles', function() {
 		.pipe(connect.reload());
 });
 
-gulp.task('html', function() {
-	gulp.src('./components/html/*.html')
-		.pipe(fileinclude())
-		.pipe(gulp.dest('./compiled/'))
-		.pipe(connect.reload());
+gulp.task('handlebars', function() {
+
+    var options = {
+	batch : [ './components/html/parts/' ]
+    };
+
+    var templatedata = JSON.parse(fs.readFileSync('./components/data.json'));
+	templatedata._package = require('./package.json');
+	    templatedata.build = Date.now();
+
+    gulp.src('./components/html/pages/*.hbs')
+	.pipe(master('./components/html/master.hbs', templatedata, options))
+	.pipe( rename( function(path){
+	    path.extname = '.html';
+	}))
+	.pipe(gulp.dest('./compiled/'))
+	.pipe(connect.reload());
 });
 
 
@@ -68,9 +84,10 @@ gulp.task('copy', function() {
 // Watch Files For Changes
 gulp.task('watch', ['server'], function() {
 	gulp.watch('./components/styles/**/*.less', ['styles']);
-	gulp.watch('./components/html/**/*.html', ['html']);
+	gulp.watch('./components/html/**/*', ['handlebars']);
+	gulp.watch('./components/*.json', ['handlebars']);
 	gulp.watch('./components/scripts/**', ['scripts']);
 	gulp.watch('./components/images/**', ['copy']);
 });
 
-gulp.task('default', ['styles', 'scripts', 'html', 'copy', 'watch']);
+gulp.task('default', ['styles', 'scripts', 'handlebars', 'copy', 'watch']);
