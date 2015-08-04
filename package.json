@@ -1,6 +1,6 @@
 {
   "name": "Landing",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Landin page",
   "main": "index.js",
   "scripts": {
@@ -9,16 +9,17 @@
   "author": "Grzegorz Nyga",
   "license": "BSD-2-Clause",
   "devDependencies": {
-      "gulp": "~3.9.0",
-      "gulp-autoprefixer": "~2.3.1",
-      "gulp-connect": "~2.2.0",
-      "gulp-file-include": "~0.13.7",
-      "gulp-less": "~3.0.3"
-      "gulp-plumber": "~1.0.1",
-      "gulp-sourcemaps": "~1.5.2",
-      "gulp-stylus": "~2.0.6",
-      "gulp-uglify": "~1.2.0",
-      "gulp-util": "~3.0.6",
-      "gulp-newer": "~0.5.1",
+    "gulp": "~3.9.0",
+    "gulp-autoprefixer": "~2.3.1",
+    "gulp-connect": "~2.2.0",
+    "gulp-handlebars-master": "0.0.2",
+    "gulp-less": "~3.0.3",
+    "gulp-newer": "~0.5.1",
+    "gulp-plumber": "~1.0.1",
+    "gulp-rename": "~1.2.2",
+    "gulp-sourcemaps": "~1.5.2",
+    "gulp-stylus": "~2.0.6",
+    "gulp-uglify": "~1.2.0",
+    "gulp-util": "~3.0.6"
   }
 }
