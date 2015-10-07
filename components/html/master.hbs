@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+	<title>{{ _package.name }} - {{ _page.title  }}</title>
+	<link rel="stylesheet" href="css/main.css?{{ build }}" />
+	{{# if _page.og }}
+	    {{> meta _page.og}}
+	{{/if }}
+    </head>
+    <body>
+	<header>
+	<h1>{{ _package.name }} - {{ _page.title  }}</h1>
+	<nav>
+		<a href="index.html" class="{{_page.nav_index }}">Index</a>
+		<a href="about.html" class="{{_page.nav_about }}">About</a>
+	</nav>
+	</header>
+
+	<main class="{{ _page.mainclass }}">
+	{{{ content }}}
+	</main>
+
+	<footer>
+	    &copy; 2015 {{ _package.author }}, {{ _package.license }}
+	    
+	</footer>	    
+	<script src="js/main.js?{{ build }}"></script>
+    </body>
+</html>
+
+

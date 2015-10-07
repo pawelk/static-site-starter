@@ -1,4 +1,3 @@
-(function(global, undefined) {
-	var hello = "hello script";
-	console.log(hello);
-}(window));
+import * as app from "./app";
+
+app.hello('world');
