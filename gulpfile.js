@@ -13,8 +13,14 @@ var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var browserify = require('browserify');
 var babelify = require('babelify');
+var gulpif = require('gulp-if');
 var fs = require('fs');
 
+var prod = false;
+
+gulp.task('set-prod', function(){
+    prod = true;
+});
 
 
 gulp.task('server', function() {
@@ -69,8 +75,7 @@ gulp.task('scripts', function() {
     return b.bundle()
 	.pipe(source('main.js'))
 	.pipe(buffer())
-	.pipe(sourcemaps.init({loadMaps: true}))
-        // Add transformation tasks to the pipeline here.
+	.pipe(gulpif( !prod, sourcemaps.init({loadMaps: true})) )
         .pipe(uglify())
         .on('error', gutil.log)
 	.pipe(sourcemaps.write('./compiled/js/'))
@@ -78,7 +83,7 @@ gulp.task('scripts', function() {
 	.pipe(connect.reload());
 });
 
-// for fonts
+// static assets
 gulp.task('copy', function() {
 	gulp.src('./components/fonts/**')
 	    .pipe(newer('./compiled/fonts'))
