@@ -1,6 +1,6 @@
 {
     "index" : {
-	"title" : "Home Page!",
+	"title" : "Home Page",
 	"mainclass" : "home",
 	"nav_index" : "active"
     },

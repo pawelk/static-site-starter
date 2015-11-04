@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var less = require('gulp-less');
 var prefix = require('gulp-autoprefixer');
-var connect = require('gulp-connect');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var newer = require('gulp-newer');
@@ -15,6 +14,12 @@ var browserify = require('browserify');
 var babelify = require('babelify');
 var gulpif = require('gulp-if');
 var fs = require('fs');
+var browserSync = require("browser-sync").create();
+
+var plumberErrorHandler = function( e ){
+    gutil.log( e );
+    gutil.beep();
+};
 
 var prod = false;
 
@@ -22,27 +27,40 @@ gulp.task('set-prod', function(){
     prod = true;
 });
 
+gulp.task('server', ['styles', 'scripts', 'handlebars', 'copy'], function() {
+    var src = './components/';
+    var dest = './compiled/';
+    var assets = ['libs', 'fonts', 'images'].map((dir)=>(src+dir+'/**/*'));
+    browserSync.init({
+        server: {
+            baseDir: dest
+        }
+    });
 
-gulp.task('server', function() {
-	connect.server({
-		root: './compiled/',
-		port: 8080,
-		livereload: true
-	});
+    gulp.watch( src + 'styles/*.less', ['styles'] );
+    gulp.watch( src + 'scripts/**/*.js', ['watch-js']);
+    gulp.watch( src + 'html/**/*.hbs', ['handlebars']);
+    gulp.watch( src + '*.json', ['watch-hbs']);
+    gulp.watch( assets, ['watch-assets']);
+    gulp.watch( dest + '**/*.html', ['watch-html']);
 });
+
+gulp.task('watch-js', ['scripts'], ()=>browserSync.reload());
+gulp.task('watch-html', ()=>browserSync.reload());
+gulp.task('watch-assets', ['copy'], ()=>browserSync.reload());
 
 gulp.task('styles', function() {
 	gulp.src('./components/styles/*.less')
+		.pipe(plumber(plumberErrorHandler))
 		.pipe(gulpif( !prod, sourcemaps.init()) )
 		.pipe(less({
 			compress : prod
 		 }))
-		.on('error', gutil.log)
-		.on('error', gutil.beep)
 		.pipe(prefix())
 		.pipe(gulpif(!prod, sourcemaps.write('./maps')) )
+		.pipe(plumber.stop())
 		.pipe(gulp.dest('./compiled/css/'))
-		.pipe(connect.reload());
+		.pipe(browserSync.stream({match: '**/*.css'}));
 });
 
 gulp.task('handlebars', function() {
@@ -56,15 +74,18 @@ gulp.task('handlebars', function() {
 	templatedata.build = Date.now();
 
     gulp.src('./components/html/pages/*.hbs')
+	.pipe(plumber(plumberErrorHandler))
 	.pipe(master('./components/html/master.hbs', templatedata, options))
+	.on('error', gutil.log)
+	.on('error', gutil.beep)
+	.pipe(plumber.stop())
 	.pipe( rename( function(path){
 	    path.extname = '.html';
 	}))
-	.pipe(gulp.dest('./compiled/'))
-	.pipe(connect.reload());
+	.pipe(gulp.dest('./compiled/'));
+
 
 });
-
 
 gulp.task('scripts', function() {
     var b = browserify({ 
@@ -74,39 +95,27 @@ gulp.task('scripts', function() {
     });
     return b.bundle()
 	.pipe(source('main.js'))
+	.pipe(plumber(plumberErrorHandler))
 	.pipe(buffer())
 	.pipe(gulpif( !prod, sourcemaps.init({loadMaps: true})) )
         .pipe(uglify())
-        .on('error', gutil.log)
 	.pipe(sourcemaps.write('./compiled/js/'))
-	.pipe(gulp.dest('./compiled/js/'))
-	.pipe(connect.reload());
+	.pipe(plumber.stop())
+	.pipe(gulp.dest('./compiled/js/'));
 });
 
 // static assets
 gulp.task('copy', function() {
 	gulp.src('./components/fonts/**')
 	    .pipe(newer('./compiled/fonts'))
-	    .pipe(gulp.dest('./compiled/fonts'))
-	    .pipe(connect.reload());
+	    .pipe(gulp.dest('./compiled/fonts'));
 	gulp.src('./components/libs/**')
 	    .pipe(newer('./compiled/js/libs'))
-	    .pipe(gulp.dest('./compiled/js/libs'))
-	    .pipe(connect.reload());
+	    .pipe(gulp.dest('./compiled/js/libs'));
 	gulp.src('./components/images/**')
 	    .pipe(newer('./compiled/img'))
-	    .pipe(gulp.dest('./compiled/img'))
-	    .pipe(connect.reload());
+	    .pipe(gulp.dest('./compiled/img'));
     
 });
 
-// Watch Files For Changes
-gulp.task('watch', ['server'], function() {
-	gulp.watch('./components/styles/**/*.less', ['styles']);
-	gulp.watch('./components/html/**/*', ['handlebars']);
-	gulp.watch('./components/*.json', ['handlebars']);
-	gulp.watch('./components/scripts/**', ['scripts']);
-	gulp.watch('./components/images/**', ['copy']);
-});
-
-gulp.task('default', ['styles', 'scripts', 'handlebars', 'copy', 'watch']);
+gulp.task('default', ['server']);
