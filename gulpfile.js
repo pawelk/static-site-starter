@@ -14,56 +14,62 @@ var browserify = require('browserify');
 var babelify = require('babelify');
 var gulpif = require('gulp-if');
 var fs = require('fs');
-var browserSync = require("browser-sync").create();
+var browserSync;
+var del;
+
 
 var plumberErrorHandler = function( e ){
     gutil.log( e );
     gutil.beep();
 };
 
-var prod = false;
+var options = {
+    src : './components/',
+    dest : './compiled/',
+    assets : ['libs', 'fonts', 'images'],
+    dev : gutil.env.dev
+};
 
-gulp.task('set-prod', function(){
-    prod = true;
-});
 
-gulp.task('server', ['styles', 'scripts', 'handlebars', 'copy'], function() {
-    var src = './components/';
-    var dest = './compiled/';
-    var assets = ['libs', 'fonts', 'images'].map((dir)=>(src+dir+'/**/*'));
+gulp.task('server', ['styles', 'scripts', 'handlebars', 'copy'], () => {
+    var assets = options.assets.map((dir)=>(options.src+dir+'/**/*'));
+    browserSync = require("browser-sync").create();
     browserSync.init({
         server: {
-            baseDir: dest
+            baseDir: options.dest
         }
     });
 
-    gulp.watch( src + 'styles/*.less', ['styles'] );
-    gulp.watch( src + 'scripts/**/*.js', ['watch-js']);
-    gulp.watch( src + 'html/**/*.hbs', ['handlebars']);
-    gulp.watch( src + '*.json', ['watch-hbs']);
+    gulp.watch( options.src + 'styles/*.less', ['styles'] );
+    gulp.watch( options.src + 'scripts/**/*.js', ['watch-js']);
+    gulp.watch( options.src + 'html/**/*.hbs', ['handlebars']);
+    gulp.watch( options.src + '*.json', ['watch-hbs']);
     gulp.watch( assets, ['watch-assets']);
-    gulp.watch( dest + '**/*.html', ['watch-html']);
+    gulp.watch( options.dest + '**/*.html', ['watch-html']);
 });
 
 gulp.task('watch-js', ['scripts'], ()=>browserSync.reload());
 gulp.task('watch-html', ()=>browserSync.reload());
 gulp.task('watch-assets', ['copy'], ()=>browserSync.reload());
 
-gulp.task('styles', function() {
-	gulp.src('./components/styles/*.less')
+gulp.task('styles', ['clean'], () => {
+    var stream = gulp.src('./components/styles/*.less')
 		.pipe(plumber(plumberErrorHandler))
-		.pipe(gulpif( !prod, sourcemaps.init()) )
+		.pipe(gulpif( options.dev, sourcemaps.init()) )
 		.pipe(less({
-			compress : prod
+			compress : !options.dev
 		 }))
 		.pipe(prefix())
-		.pipe(gulpif(!prod, sourcemaps.write('./maps')) )
+		.pipe(gulpif( options.dev, sourcemaps.write('./maps')) )
 		.pipe(plumber.stop())
-		.pipe(gulp.dest('./compiled/css/'))
-		.pipe(browserSync.stream({match: '**/*.css'}));
+		.pipe(gulp.dest('./compiled/css/'));
+    if( browserSync ){
+	stream = stream.pipe( browserSync.stream({match: '**/*.css'}));
+    }
+    return stream;
 });
 
-gulp.task('handlebars', function() {
+gulp.task('handlebars', ['clean'], () => {
 
     var options = {
 	batch : [ './components/html/parts/' ]
@@ -73,21 +79,18 @@ gulp.task('handlebars', function() {
 	templatedata._package = require('./package.json');
 	templatedata.build = Date.now();
 
-    gulp.src('./components/html/pages/*.hbs')
+    return gulp.src('./components/html/pages/*.hbs')
 	.pipe(plumber(plumberErrorHandler))
 	.pipe(master('./components/html/master.hbs', templatedata, options))
-	.on('error', gutil.log)
-	.on('error', gutil.beep)
 	.pipe(plumber.stop())
 	.pipe( rename( function(path){
 	    path.extname = '.html';
 	}))
 	.pipe(gulp.dest('./compiled/'));
 
-
 });
 
-gulp.task('scripts', function() {
+gulp.task('scripts', ['clean'], () => {
     var b = browserify({ 
 	    entries : './components/scripts/main.js',
 	    debug: true,
@@ -97,7 +100,7 @@ gulp.task('scripts', function() {
 	.pipe(source('main.js'))
 	.pipe(plumber(plumberErrorHandler))
 	.pipe(buffer())
-	.pipe(gulpif( !prod, sourcemaps.init({loadMaps: true})) )
+	.pipe(gulpif( options.dev, sourcemaps.init({loadMaps: true})) )
         .pipe(uglify())
 	.pipe(sourcemaps.write('./compiled/js/'))
 	.pipe(plumber.stop())
@@ -105,7 +108,7 @@ gulp.task('scripts', function() {
 });
 
 // static assets
-gulp.task('copy', function() {
+gulp.task('copy', ['clean'], () => {
 	gulp.src('./components/fonts/**')
 	    .pipe(newer('./compiled/fonts'))
 	    .pipe(gulp.dest('./compiled/fonts'));
@@ -118,4 +121,17 @@ gulp.task('copy', function() {
     
 });
 
+gulp.task('clean', function(){
+    if( !options.dev ){
+	del = require('del');
+	gutil.log('no --dev option. cleaning up the ' + options.dest +' dir');
+	return del( options.dest );
+    }
+    else {
+	gutil.log('--dev: no clean-up in the destination dir');
+	return true;
+    }
+});
+
 gulp.task('default', ['server']);
+gulp.task('build', ['styles', 'scripts', 'handlebars', 'copy']);
