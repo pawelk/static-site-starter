@@ -27,8 +27,7 @@ gulp.task('server', function() {
 gulp.task('styles', function() {
 	gulp.src('./components/styles/*.less')
 		.pipe(sourcemaps.init())
-		.pipe(less())
-		.on('error', gutil.log)
+		.pipe(less())		
 		.pipe(prefix())
 		.pipe(sourcemaps.write('./maps'))
 		.pipe(gulp.dest('./compiled/css/'))
