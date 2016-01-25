@@ -14,6 +14,7 @@ var buffer = require('vinyl-buffer');
 var browserify = require('browserify');
 var babelify = require('babelify');
 var fs = require('fs');
+var rimraf = require('gulp-rimraf');
 
 
 gulp.task('server', function() {
@@ -22,6 +23,11 @@ gulp.task('server', function() {
 		port: 8080,
 		livereload: true
 	});
+});
+
+gulp.task('clean', function() {
+	return gulp.src('./compiled', { read: false }) // much faster	 
+		.pipe(rimraf());
 });
 
 gulp.task('styles', function() {
@@ -99,3 +105,7 @@ gulp.task('watch', ['server'], function() {
 });
 
 gulp.task('default', ['styles', 'scripts', 'handlebars', 'copy', 'watch']);
+
+gulp.task('build', ['clean'], function() {
+	gulp.start(['styles', 'scripts', 'handlebars', 'copy']);
+});
