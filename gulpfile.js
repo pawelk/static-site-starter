@@ -9,9 +9,14 @@ var newer = require('gulp-newer');
 var plumber = require('gulp-plumber');
 var rename = require('gulp-rename');
 var master = require('gulp-handlebars-master');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var browserify = require('browserify');
+var babelify = require('babelify');
 var fs = require('fs');
+var rimraf = require('gulp-rimraf');
 
-    
+
 gulp.task('server', function() {
 	connect.server({
 		root: './compiled/',
@@ -20,12 +25,15 @@ gulp.task('server', function() {
 	});
 });
 
+gulp.task('clean', function() {
+	return gulp.src('./compiled', { read: false }) // much faster	 
+		.pipe(rimraf());
+});
+
 gulp.task('styles', function() {
 	gulp.src('./components/styles/*.less')
 		.pipe(sourcemaps.init())
-		.pipe(less())
-		.on('error', gutil.log)
-		.on('error', gutil.beep)
+		.pipe(less())		
 		.pipe(prefix())
 		.pipe(sourcemaps.write('./maps'))
 		.pipe(gulp.dest('./compiled/css/'))
@@ -53,14 +61,21 @@ gulp.task('handlebars', function() {
 
 
 gulp.task('scripts', function() {
-	gulp.src('./components/scripts/**/*.js')
-		.pipe(plumber())
-		.pipe(sourcemaps.init())
-		.pipe(uglify())		
-		.pipe(sourcemaps.write('./maps'))
-		.pipe(plumber.stop())
-		.pipe(gulp.dest('./compiled/js/'))
-		.pipe(connect.reload());
+    var b = browserify({ 
+	    entries : './components/scripts/main.js',
+	    debug: true,
+	    transform : [ babelify ]
+    });
+    return b.bundle()
+	.pipe(source('main.js'))
+	.pipe(buffer())
+	.pipe(sourcemaps.init({loadMaps: true}))
+        // Add transformation tasks to the pipeline here.
+        .pipe(uglify())
+        .on('error', gutil.log)
+	.pipe(sourcemaps.write('./compiled/js/'))
+	.pipe(gulp.dest('./compiled/js/'))
+	.pipe(connect.reload());
 });
 
 // for fonts
@@ -90,3 +105,7 @@ gulp.task('watch', ['server'], function() {
 });
 
 gulp.task('default', ['styles', 'scripts', 'handlebars', 'copy', 'watch']);
+
+gulp.task('build', ['clean'], function() {
+	gulp.start(['styles', 'scripts', 'handlebars', 'copy']);
+});
